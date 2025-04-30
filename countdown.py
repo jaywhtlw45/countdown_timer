@@ -12,6 +12,7 @@ root.configure(bg='lightblue')
 prev_time_entry = 5
 time_left = prev_time_entry
 timer_job_id = None
+first_start = True
 
 def push_notificaiton(message:str, duration=1000):
     note = tk.Label(root, text=message, font=("Helvetica",12), justify="center")
@@ -47,7 +48,8 @@ def set_time()-> bool:
         time_left = minutes * 60 + seconds
 
         # when reset button is presssed the previous time that was entered by user will be used
-        prev_time_entry = time_left
+        if first_start:
+            prev_time_entry = time_left
         return True
     else:
         print("invalid time")
@@ -60,7 +62,7 @@ def is_valid_timer_string(s: str) -> bool:
 
 
 def update_timer():
-    global time_left, timer_job_id
+    global time_left, timer_job_id, first_start
 
     if time_left > 0:
         update_timer_entry_display()
@@ -79,8 +81,9 @@ def update_timer():
 
 
 def start_timer():
-    global timer_job_id
-    print('start_timer()', timer_job_id)
+    global timer_job_id, prev_time_entry
+    print('time_left:', time_left)
+    print('prev_time_entry', prev_time_entry)
 
     if not timer_job_id:
         timer_entry.config(state="readonly")
@@ -88,23 +91,28 @@ def start_timer():
             print("set_time returns True")
             update_timer()
         else:
-            print("set_time returns False")
+            print("set_time")
 
 def stop_timer():
-    global timer_job_id
+    global timer_job_id, first_start
     print(timer_job_id)
     if timer_job_id:
         root.after_cancel(timer_job_id)
         timer_job_id = None
         timer_entry.config(state="normal")
+        first_start = False
 
 def restart_timer():
+    global first_start
     global timer_job_id, time_left, prev_time_entry
     if timer_job_id:
         root.after_cancel(timer_job_id)
         timer_job_id = None
+        first_start = True
+    
     
     time_left = prev_time_entry
+    print("time_left:", time_left)
     update_timer_entry_display()
     start_timer()
 
