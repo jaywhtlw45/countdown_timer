@@ -12,7 +12,7 @@ root.configure(bg='lightblue')
 prev_time_entry = 5
 time_left = prev_time_entry
 timer_job_id = None
-first_start = True
+new_start = True
 
 def push_notificaiton(message:str, duration=1000):
     note = tk.Label(root, text=message, font=("Helvetica",12), justify="center")
@@ -46,23 +46,35 @@ def set_time()-> bool:
     if is_valid_timer_string(entry):
         minutes, seconds = map(int, entry.strip().split(":"))
         time_left = minutes * 60 + seconds
+        print("set_time() time_left:", time_left)
+    else:
+        print("invalid time")
+        push_notificaiton("invalid time")
+        timer_entry.config(state='normal')
+        return False
 
-        # when reset button is presssed the previous time that was entered by user will be used
-        if first_start:
-            prev_time_entry = time_left
+    if time_left > 0 and new_start:
+        prev_time_entry = time_left
+        return True
+    elif time_left > 0:
         return True
     else:
         print("invalid time")
         push_notificaiton("invalid time")
+        timer_entry.config(state='normal')
         return False
 
+        # when reset button is presssed the previous time that was entered by user will be used
+        
+        
 def is_valid_timer_string(s: str) -> bool:
     pattern = r'^\d{1,3}:\d{1,3}$'
     return bool(re.match(pattern, s))
 
 
 def update_timer():
-    global time_left, timer_job_id, first_start
+    global time_left, timer_job_id, new_start
+    print("time_left", time_left)
 
     if time_left > 0:
         update_timer_entry_display()
@@ -75,10 +87,6 @@ def update_timer():
         
         update_timer_entry_display()
         timer_entry.config(state="normal")
-
-        # when restart event occurs use the last entry from the user
-        time_left = prev_time_entry
-
 
 def start_timer():
     global timer_job_id, prev_time_entry
@@ -94,21 +102,24 @@ def start_timer():
             print("set_time")
 
 def stop_timer():
-    global timer_job_id, first_start
+    global timer_job_id, new_start
     print(timer_job_id)
     if timer_job_id:
         root.after_cancel(timer_job_id)
         timer_job_id = None
         timer_entry.config(state="normal")
-        first_start = False
+        new_start = False
 
 def restart_timer():
-    global first_start
+    global new_start
     global timer_job_id, time_left, prev_time_entry
     if timer_job_id:
         root.after_cancel(timer_job_id)
         timer_job_id = None
-        first_start = True
+        
+        new_start = True
+        time_left = prev_time_entry
+        timer_entry.config(state="normal")
     
     
     time_left = prev_time_entry
