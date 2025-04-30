@@ -14,8 +14,8 @@ time_left = prev_time_entry
 timer_job_id = None
 new_start = True
 
-def push_notificaiton(message:str, duration=1000):
-    note = tk.Label(root, text=message, font=("Helvetica",12))
+def push_notificaiton(message:str, font_color:str, duration=1000):
+    note = tk.Label(root, text=message, font=("Helvetica",12), fg=font_color, bg="lightblue")
     note.pack(anchor="w", padx=10)
     note.after(duration, note.destroy)
 
@@ -38,34 +38,30 @@ notification_frame = tk.Frame(root, bg='lightblue', height=20)
 notification_frame.pack(side='bottom', fill='x', pady=10)
 notification_frame.pack_propagate(False)
 
+def handle_invalid_time()->bool:
+    print("invalid time")
+    push_notificaiton("invalid time", "red")
+    timer_entry.config(state='normal')
+    return False
+
 # validates user input from timer_entry widget and adjusts global time_left
 def set_time()-> bool:
     global time_left, prev_time_entry
     entry = timer_entry.get()
 
-    if is_valid_timer_string(entry):
-        minutes, seconds = map(int, entry.strip().split(":"))
-        time_left = minutes * 60 + seconds
-        print("set_time() time_left:", time_left)
-    else:
-        print("invalid time")
-        push_notificaiton("invalid time")
-        timer_entry.config(state='normal')
-        return False
+    if not(is_valid_timer_string(entry)):
+        return handle_invalid_time()
+    
+    minutes, seconds = map(int, entry.strip().split(":"))
+    time_left = minutes*60 + seconds
 
-    if time_left > 0 and new_start:
+    if time_left <=0:
+        return handle_invalid_time()
+    
+    if new_start:
         prev_time_entry = time_left
-        return True
-    elif time_left > 0:
-        return True
-    else:
-        print("invalid time")
-        push_notificaiton("invalid time")
-        timer_entry.config(state='normal')
-        return False
-
-        # when reset button is presssed the previous time that was entered by user will be used
-        
+    
+    return True        
 
 def is_valid_timer_string(s: str) -> bool:
     pattern = r'^\d{1,3}:\d{1,3}$'
