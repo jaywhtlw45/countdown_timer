@@ -14,10 +14,7 @@ time_left = prev_time_entry
 timer_job_id = None
 new_start = True
 
-def push_notificaiton(message:str, font_color:str, duration=1000):
-    note = tk.Label(root, text=message, font=("Helvetica",12), fg=font_color, bg="lightblue")
-    note.pack(anchor="w", padx=10)
-    note.after(duration, note.destroy)
+
 
 # updates the correct time in the timer
 def update_timer_entry_display():
@@ -29,14 +26,19 @@ def update_timer_entry_display():
 
 # timer entry widget
 timer_entry = tk.Entry(root, font=("Helvetica",48), bg = "lightblue", justify = "center")
-timer_entry.pack(pady=20)
+timer_entry.pack(pady=(20,10))
 update_timer_entry_display()
 timer_entry.config(state="normal")
 
 # notification frame widget
-notification_frame = tk.Frame(root, bg='lightblue', height=20)
+notification_frame = tk.Frame(root, bg='lightblue', height=60)
 notification_frame.pack(side='bottom', fill='x', pady=10)
 notification_frame.pack_propagate(False)
+
+def push_notificaiton(message: str, font_color: str, duration=5000):
+    note = tk.Label(notification_frame, text=message, font=("Helvetica", 12), fg=font_color, bg="lightblue")
+    note.pack(anchor="s", padx=10)
+    note.after(duration, note.destroy)
 
 def handle_invalid_time()->bool:
     print("invalid time")
@@ -64,19 +66,16 @@ def set_time()-> bool:
     return True        
 
 def is_valid_timer_string(s: str) -> bool:
-    pattern = r'^\d{1,3}:\d{1,3}$'
-    return bool(re.match(pattern, s))
+    return bool(re.match(r'^\d{1,3}:\d{1,3}$', s))
 
 
 def update_timer():
     global time_left, timer_job_id, new_start
-    print("time_left", time_left)
 
     if time_left > 0:
         update_timer_entry_display()
         time_left -= 1
         timer_job_id = root.after(1000, update_timer)
-
     else:
         root.after_cancel(timer_job_id)
         timer_job_id = None
@@ -123,17 +122,19 @@ def restart_timer():
     update_timer_entry_display()
     start_timer()
 
+# Button Frame
+button_frame = tk.Frame(root, bg="lightblue")
+button_frame.pack(pady=10, side="top", fill = 'y' )
 
-start_button = tk.Button(root, text = "Start", font = ("Helvetica",14), command=start_timer)
-start_button.pack(pady='5')
+start_button = tk.Button(button_frame, text = "Start", font = ("Helvetica",14), command=start_timer)
+start_button.pack(padx='5', side="left")
 
-stop_button = tk.Button(root, text="Stop Button", font =("Helvetica", 14), command=stop_timer)
-stop_button.pack(pady='5')
+stop_button = tk.Button(button_frame, text="Stop Button", font =("Helvetica", 14), command=stop_timer)
+stop_button.pack(padx='5', side="left")
 
-reset_button = tk.Button(root, text="Reset Button", font = ("Helvetica", 14), command=restart_timer)
-reset_button.pack(pady='5')
+reset_button = tk.Button(button_frame, text="Reset Button", font = ("Helvetica", 14), command=restart_timer)
+reset_button.pack(padx='5', side = "left")
 
-# start the tkinter event loop
 root.mainloop()
 
 
