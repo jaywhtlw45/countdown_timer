@@ -4,3 +4,4 @@ seconds only mode
 make text box not be able to be clicked
 theme toggle
 add sound when time is up
+

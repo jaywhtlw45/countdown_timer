@@ -1,0 +1,3 @@
+known bugs
+    timer will not start on zero
+    invalid notification will not occur on first use and freeze occurs

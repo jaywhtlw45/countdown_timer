@@ -13,6 +13,11 @@ prev_time_entry = 5
 time_left = prev_time_entry
 timer_job_id = None
 
+def push_notificaiton(message:str, duration=1000):
+    note = tk.Label(root, text=message, font=("Helvetica",12), justify="center")
+    note.pack(anchor="w", padx=10)
+    note.after(duration, note.destroy)
+
 # updates the correct time in the timer
 def update_timer_entry_display():
     global time_left
@@ -21,14 +26,19 @@ def update_timer_entry_display():
     timer_entry.insert(0, f"{time_left//60}:{time_left % 60:02d}")
     timer_entry.config(state="readonly")
 
-#Create the timer label
+# timer entry widget
 timer_entry = tk.Entry(root, font=("Helvetica",48), bg = "lightblue", justify = "center")
 timer_entry.pack(pady=20)
 update_timer_entry_display()
 timer_entry.config(state="normal")
 
+# notification frame widget
+notification_frame = tk.Frame(root, bg='lightblue', height=20)
+notification_frame.pack(side='bottom', fill='x', pady=10)
+notification_frame.pack_propagate(False)
+
 # validates user input from timer_entry widget and adjusts global time_left
-def update_time_left_from_input()-> bool:
+def set_time()-> bool:
     global time_left, prev_time_entry
     entry = timer_entry.get()
 
@@ -39,8 +49,10 @@ def update_time_left_from_input()-> bool:
         # when reset button is presssed the previous time that was entered by user will be used
         prev_time_entry = time_left
         return True
-    
-    return False
+    else:
+        print("invalid time")
+        push_notificaiton("invalid time")
+        return False
 
 def is_valid_timer_string(s: str) -> bool:
     pattern = r'^\d{1,3}:\d{1,3}$'
@@ -72,8 +84,11 @@ def start_timer():
 
     if not timer_job_id:
         timer_entry.config(state="readonly")
-        update_time_left_from_input()
-        update_timer()
+        if (set_time()):
+            print("set_time returns True")
+            update_timer()
+        else:
+            print("set_time returns False")
 
 def stop_timer():
     global timer_job_id
