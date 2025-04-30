@@ -1,7 +1,9 @@
 font selection
 improve input validation
+add utils folder
 
 Time Controller class
 seconds only mode
 theme toggle
 add sound when time is up
+change buttons into images

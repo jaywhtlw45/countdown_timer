@@ -1,6 +1,7 @@
 import tkinter as tk
 import time
 import re
+from PIL import Image, ImageTk
 
 # create the main application window
 root = tk.Tk()
@@ -14,6 +15,18 @@ time_left = prev_time_entry
 timer_job_id = None
 new_start = True
 
+font_family = "Arial"
+size = 14
+style = "" # options bold, italic, or bold italic
+
+# background
+bg_image = Image.open("./img/default/background/background.jpg")
+bg_image = bg_image.resize((400, 500), Image.Resampling.LANCZOS)
+bg_photo = ImageTk.PhotoImage(bg_image)
+
+bg_label = tk.Label(root, image=bg_photo)
+bg_label.place(x=0, y=0, relwidth=1, relheight=1)
+
 
 
 # updates the correct time in the timer
@@ -25,7 +38,7 @@ def update_timer_entry_display():
     timer_entry.config(state="readonly")
 
 # timer entry widget
-timer_entry = tk.Entry(root, font=("Helvetica",48), bg = "lightblue", justify = "center")
+timer_entry = tk.Entry(root, font=(font_family,48), bg = "lightblue", justify = "center", bd=0, readonlybackground="lightblue")
 timer_entry.pack(pady=(20,10))
 update_timer_entry_display()
 timer_entry.config(state="normal")
@@ -35,8 +48,9 @@ notification_frame = tk.Frame(root, bg='lightblue', height=60)
 notification_frame.pack(side='bottom', fill='x', pady=10)
 notification_frame.pack_propagate(False)
 
-def push_notificaiton(message: str, font_color: str, duration=5000):
-    note = tk.Label(notification_frame, text=message, font=("Helvetica", 12), fg=font_color, bg="lightblue")
+def push_notificaiton(message: str, font_color: str, duration=1000):
+    global font_family
+    note = tk.Label(notification_frame, text=message, font=(font_family, 12, "bold"), fg=font_color, bg="lightblue")
     note.pack(anchor="s", padx=10)
     note.after(duration, note.destroy)
 
@@ -67,7 +81,6 @@ def set_time()-> bool:
 
 def is_valid_timer_string(s: str) -> bool:
     return bool(re.match(r'^\d{1,3}:\d{1,3}$', s))
-
 
 def update_timer():
     global time_left, timer_job_id, new_start
@@ -126,14 +139,20 @@ def restart_timer():
 button_frame = tk.Frame(root, bg="lightblue")
 button_frame.pack(pady=10, side="top", fill = 'y' )
 
-start_button = tk.Button(button_frame, text = "Start", font = ("Helvetica",14), command=start_timer)
+#bd=0 removes border
+start_img = tk.PhotoImage(file="./img/default/buttons/start.png")
+start_button = tk.Button(button_frame, image=start_img, bg="lightblue", activebackground="lightblue", command=start_timer, bd=0)
 start_button.pack(padx='5', side="left")
 
-stop_button = tk.Button(button_frame, text="Stop Button", font =("Helvetica", 14), command=stop_timer)
+stop_img = tk.PhotoImage(file="./img/default/buttons/stop.png")
+stop_button = tk.Button(button_frame, image=stop_img, bg="lightblue", activebackground="lightblue", command=stop_timer, bd =0)
 stop_button.pack(padx='5', side="left")
 
-reset_button = tk.Button(button_frame, text="Reset Button", font = ("Helvetica", 14), command=restart_timer)
+reset_img = tk.PhotoImage(file="./img/default/buttons/reset.png")
+reset_button = tk.Button(button_frame, image=reset_img, bg="lightblue", activebackground="lightblue", command=restart_timer, bd=0)
 reset_button.pack(padx='5', side = "left")
+
+
 
 root.mainloop()
 
