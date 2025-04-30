@@ -5,7 +5,7 @@ import re
 # create the main application window
 root = tk.Tk()
 root.title('Countdown Timer')
-root.geometry('400x300')
+root.geometry('400x500')
 root.configure(bg='lightblue')
 
 # global var
@@ -15,7 +15,7 @@ timer_job_id = None
 new_start = True
 
 def push_notificaiton(message:str, duration=1000):
-    note = tk.Label(root, text=message, font=("Helvetica",12), justify="center")
+    note = tk.Label(root, text=message, font=("Helvetica",12))
     note.pack(anchor="w", padx=10)
     note.after(duration, note.destroy)
 
@@ -66,7 +66,7 @@ def set_time()-> bool:
 
         # when reset button is presssed the previous time that was entered by user will be used
         
-        
+
 def is_valid_timer_string(s: str) -> bool:
     pattern = r'^\d{1,3}:\d{1,3}$'
     return bool(re.match(pattern, s))
